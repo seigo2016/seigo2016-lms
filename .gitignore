@@ -3,4 +3,5 @@ mysql/
 lms-venv/
 .env
 .env.local
-__py_cache__/
+ __pycache__/
+
