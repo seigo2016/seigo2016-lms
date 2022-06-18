@@ -1,19 +1,22 @@
-{%- extends "layout.html" %}
+{%- extends "component/layout.html" %}
 {%- block content %}
 <div class="columns">
  <div class="container is-centered column is-two-thirds">
   {% if user.is_superuser %}
-  <div class="container columns is-centered">
-   <p class="control">
-    <a href="/course/{{course_id}}/edit" class="button is-link">
+  <div class="columns">
+   <div class="mx-5 is-half  column">
+    <p class="title">{{course.name}}</p>
+   </div>
+   <div class="container column is-centered is-one-quarter">
+    <a href="/course/{{course.id}}/edit" class="button is-link">
      編集
     </a>
-    <button id="open-modal-button" class="js-modal-trigger is-danger">
+    <button id="open-modal-button" class="js-modal-trigger button is-danger">
      削除
     </button>
-   </p>
+   </div>
+   {% endif %}
   </div>
-  {% endif %}
   <table class="table is-fullwidth is-hoverable">
    <thead>
     <tr>
@@ -43,27 +46,15 @@
   {% if user.is_superuser %}
   <div class="container columns is-centered">
    <p class="control">
-    <a href="/course/{{course_id}}/create" class="button is-link">
-     新規作成
+    <a href="/course/{{course.id}}/create" class="button is-link">
+     テキスト新規作成
     </a>
    </p>
    {% endif %}
   </div>
  </div>
 
- <div id="modal-view" class="modal">
-  <div class="modal-background"></div>
-
-  <div class="modal-content">
-   <div class="box">
-    <p>本当に削除しますか?</p>
-    <form action="/course/{{course_id}}" method="post" enctype="multipart/form-data">
-     <input type="hidden" name="_method" value="DELETE">
-     <button class="is-danger button">削除</button>
-    </form>
-   </div>
-  </div>
-
-  <button class="modal-close is-large" aria-label="close" id="close-modal-button"></button>
- </div>
+ {% with course_id = course.id %}
+ {% include "component/delete_modal.html" %}
+ {% endwith %}
  {%- endblock %}

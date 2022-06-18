@@ -67,6 +67,11 @@ def update_text(db: Session, text: schemas.Text):
     db.refresh(db_text)
     return db_text
 
+def delete_text(db: Session, text_id: int):
+    db_text = db.query(models.Text).filter(models.Text.id == text_id).first()
+    if db_text:
+        db.delete(db_text)
+    db.commit()
 
 # コース
 def get_course(db: Session, course_id: int):
@@ -91,6 +96,14 @@ def update_course(db: Session, course: schemas.Course):
         db_course.description = course.description
     db.commit()
     db.refresh(db_course)
+    return db_course
+
+def delete_course(db: Session, course_id: int):
+    db_course = db.query(models.Course).filter(models.Course.id == course_id).first()
+
+    if db_course:
+        db.delete(db_course)
+    db.commit()
     return db_course
 
 # ユーザーとコースの紐づけ

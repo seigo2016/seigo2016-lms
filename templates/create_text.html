@@ -1,26 +1,29 @@
-{%- extends "layout.html" %}
+{%- extends "component/layout.html" %}
 {%- block content %}
 <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css">
 <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
 
 <div class="container columns is-centered">
   <div class="field mt-5  column is-half">
-    {% if text %}
+    {% if type=="edit" %}
     <form action="/text/{{text.id}}/edit" method="post" enctype="multipart/form-data">
       {% else %}
-      <form action="/course/{{course_id}}/create" method="post" enctype="multipart/form-data">
+      <form action="/course/{{course.id}}/create" method="post" enctype="multipart/form-data">
         {% endif %}
         <label class="label">テキストNo</label>
         <div class="control">
-          {% if text %}
+          {% if type=="edit" %}
           <input class="input" type="text" placeholder="order id" name="order_id" value="{{text.id}}">
           {% else %}
           <input class="input" type="text" placeholder="order id" name="order_id">
           {% endif %}
         </div>
+        <div class="">
+          <p class="has-text-danger">{{message}}</p>
+        </div>
         <label class="label">テキスト名</label>
         <div class="control">
-          {% if text %}
+          {% if type=="edit" %}
           <input class="input" type="text" placeholder="course name" name="name" value="{{text.name}}">
           {% else %}
           <input class="input" type="text" placeholder="course name" name="name">
@@ -28,21 +31,21 @@
         </div>
         <label class="label mt-5">説明</label>
         <div class="control">
-          {% if text %}
+          {% if type=="edit" %}
           <textarea class="textarea" type="text" placeholder="description" name="description" rows="2">{{text.description}}</textarea>
           {% else %}
           <textarea class="textarea" type="text" placeholder="description" name="description" rows="2"></textarea>
           {% endif %}
         </div>
         <div class="control">
-          {% if text %}
+          {% if type=="edit" %}
           <textarea class="textarea" id="mde" type="text" placeholder="contents" name="contents">{{text.contents}}</textarea>
           {% else %}
           <textarea class="textarea" id="mde" type="text" placeholder="contents" name="contents"></textarea>
           {% endif %}
         </div>
         <div class="control my-5 has-text-centered">
-          {% if text %}
+          {% if type=="edit" %}
           <button class="button is-primary">更新</button>
           {% else %}
           <button class="button is-link">作成</button>

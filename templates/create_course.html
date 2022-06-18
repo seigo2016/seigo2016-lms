@@ -1,37 +1,40 @@
-{%- extends "layout.html" %}
+{%- extends "component/layout.html" %}
 {%- block content %}
 <div class="container columns is-centered">
- <div class="field mt-5  column is-half">
-  {% if course %}
-  <form action="/course/{{course_id}}/edit" method="post" enctype="multipart/form-data">
-   {% else %}
-   <form action="/course/create" method="post" enctype="multipart/form-data">
-    {% endif %}
-    <label class="label">コース名</label>
-    <div class="control">
-     {% if course %}
-     <input class="input" type="text" placeholder="course name" name="course_name" value="{{course.name}}">
-     {% else %}
-     <input class="input" type="text" placeholder="course name" name="course_name">
-     {% endif %}
-    </div>
-    <label class="label mt-5">説明</label>
-    <div class="control">
-     {% if course %}
-     <textarea class="textarea" type="text" placeholder="description" name="description" rows="3">{{course.description}}</textarea>
-     {% else %}
-     <textarea class="textarea" type="text" placeholder="description" name="description" rows="3"></textarea>
-     {% endif %}
-    </div>
-    <div class="control mt-5 has-text-centered">
-     {% if course %}
-     <button class="button is-link">更新</button>
-     {% else %}
-     <button class="button is-link">作成</button>
-     {% endif %}
-    </div>
-   </form>
- </div>
+  <div class="field mt-5  column is-half">
+    {% if type=="edit" %}
+    <form action="/course/{{course_id}}/edit" method="post" enctype="multipart/form-data">
+      {% else %}
+      <form action="/course/create" method="post" enctype="multipart/form-data">
+        {% endif %}
+        <label class="label">コース名</label>
+        <div class="control">
+          {% if type=="edit" %}
+          <input class="input" type="text" placeholder="course name" name="course_name" value="{{course.name}}">
+          {% else %}
+          <input class="input" type="text" placeholder="course name" name="course_name">
+          {% endif %}
+        </div>
+        <label class="label mt-5">説明</label>
+        <div class="control">
+          {% if type=="edit" %}
+          <textarea class="textarea" type="text" placeholder="description" name="description" rows="3">{{course.description}}</textarea>
+          {% else %}
+          <textarea class="textarea" type="text" placeholder="description" name="description" rows="3"></textarea>
+          {% endif %}
+        </div>
+        <div class="">
+          <p class="has-text-danger">{{message}}</p>
+        </div>
+        <div class="control mt-5 has-text-centered">
+          {% if type=="edit" %}
+          <button class="button is-link">更新</button>
+          {% else %}
+          <button class="button is-link">作成</button>
+          {% endif %}
+        </div>
+      </form>
+  </div>
 
 </div>
 {%- endblock %}
