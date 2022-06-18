@@ -1,6 +1,6 @@
 data/
 mysql/
-seigo2016-lms/
+lms-venv/
 .env
 .env.local
 __py_cache__/
