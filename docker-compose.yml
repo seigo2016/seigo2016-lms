@@ -6,9 +6,9 @@ services:
       - ./mysql/db:/docker-entrypoint-initdb.d
       - ./data:/var/lib/mysql
     ports:
-      - '3306:3306'
+      - ${DB_PORT}:${DB_PORT}
     environment:
-      MYSQL_ROOT_PASSWORD: mysql
-      MYSQL_DATABASE: seigo2016-lms
-      MYSQL_USER: seigo2016-lms
-      MYSQL_PASSWORD: seigo2016
+      MYSQL_ROOT_PASSWORD: ${DB_HOST}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
