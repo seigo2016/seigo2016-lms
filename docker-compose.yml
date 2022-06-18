@@ -1,0 +1,14 @@
+version: "3"
+services:
+  mysql:
+    image: mariadb
+    volumes:
+      - ./mysql/db:/docker-entrypoint-initdb.d
+      - ./data:/var/lib/mysql
+    ports:
+      - '3306:3306'
+    environment:
+      MYSQL_ROOT_PASSWORD: mysql
+      MYSQL_DATABASE: seigo2016-lms
+      MYSQL_USER: seigo2016-lms
+      MYSQL_PASSWORD: seigo2016

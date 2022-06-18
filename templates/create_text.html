@@ -1,0 +1,63 @@
+{%- extends "layout.html" %}
+{%- block content %}
+<link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css">
+<script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
+
+<div class="container columns is-centered">
+  <div class="field mt-5  column is-half">
+    {% if text %}
+    <form action="/text/{{text.id}}/edit" method="post" enctype="multipart/form-data">
+      {% else %}
+      <form action="/course/{{course_id}}/create" method="post" enctype="multipart/form-data">
+        {% endif %}
+        <label class="label">テキストNo</label>
+        <div class="control">
+          {% if text %}
+          <input class="input" type="text" placeholder="order id" name="order_id" value="{{text.id}}">
+          {% else %}
+          <input class="input" type="text" placeholder="order id" name="order_id">
+          {% endif %}
+        </div>
+        <label class="label">テキスト名</label>
+        <div class="control">
+          {% if text %}
+          <input class="input" type="text" placeholder="course name" name="name" value="{{text.name}}">
+          {% else %}
+          <input class="input" type="text" placeholder="course name" name="name">
+          {% endif %}
+        </div>
+        <label class="label mt-5">説明</label>
+        <div class="control">
+          {% if text %}
+          <textarea class="textarea" type="text" placeholder="description" name="description" rows="2">{{text.description}}</textarea>
+          {% else %}
+          <textarea class="textarea" type="text" placeholder="description" name="description" rows="2"></textarea>
+          {% endif %}
+        </div>
+        <div class="control">
+          {% if text %}
+          <textarea class="textarea" id="mde" type="text" placeholder="contents" name="contents">{{text.contents}}</textarea>
+          {% else %}
+          <textarea class="textarea" id="mde" type="text" placeholder="contents" name="contents"></textarea>
+          {% endif %}
+        </div>
+        <div class="control my-5 has-text-centered">
+          {% if text %}
+          <button class="button is-primary">更新</button>
+          {% else %}
+          <button class="button is-link">作成</button>
+          {% endif %}
+        </div>
+      </form>
+      <script>
+        const easyMDE = new EasyMDE({ element: document.getElementById('mde') });
+      </script>
+      <style type="text/css">
+        .CodeMirror pre {
+          margin: 0em !important;
+        }
+      </style>
+  </div>
+
+</div>
+{%- endblock %}

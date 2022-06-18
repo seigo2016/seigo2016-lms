@@ -1,0 +1,6 @@
+data/
+mysql/
+seigo2016-lms/
+.env
+.env.local
+__py_cache__/

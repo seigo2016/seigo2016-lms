@@ -1,0 +1,38 @@
+.site-content {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+}
+
+.site-content-body {
+    flex: 1;
+}
+
+.row-link a{
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: block;
+}
+.row-link {
+    width: 0;
+    min-width: 0;
+    border: 0;
+    padding: 0;
+}
+tr {
+    position: relative;
+}
+
+.hljs {
+    background-color: #002451;
+    color: #f8f8f8;
+}
+
+pre {
+    padding: 0 !important;
+    margin-top: 1vw !important;
+    margin-bottom: 1vw !important;
+}
