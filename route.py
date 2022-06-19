@@ -44,8 +44,7 @@ def get_user(user_id: str):
 
 class LoginView(MethodView):
     def get(self):
-        if request.method == "GET":
-            return render_template("login.html")
+        return render_template("login.html")
             
     def post(self):
         username = request.form["username"]
@@ -62,6 +61,11 @@ class LoginView(MethodView):
 
         return redirect("/")
 
+class LogoutView(MethodView):
+    @login_required
+    def get(self):
+        logout_user()
+        return redirect("/login")
 
 class CoursesView(MethodView):
     @login_required
@@ -83,8 +87,8 @@ class CoursesView(MethodView):
             user=current_user,
         )
 
-@login_required
 class CourseTopView(MethodView):
+    @login_required
     def get(self, course_id):
         texts = []
         course=None
@@ -100,14 +104,15 @@ class CourseTopView(MethodView):
             user = current_user,
             course = course
         )
+    @login_required
     def post(self, course_id):
         if request.form.get('_method') == "DELETE":
             with DBContext() as db:
                 crud.delete_course(db, course_id)
         return redirect("/courses")
 
-@login_required
 class ManageCourseView(MethodView):
+    @login_required
     def get(self, course_id, param):
         superuser_only(block=True)
         with DBContext() as db:
@@ -129,7 +134,7 @@ class ManageCourseView(MethodView):
                 type="edit"
             )
         return abort(400)
-
+    @login_required
     def post(self, course_id, param):
         superuser_only(block=True)
         if param == "create":
@@ -167,8 +172,8 @@ class ManageCourseView(MethodView):
             return redirect("/courses")
         return "Invalid URL", 400
 
-@login_required
 class CreateCourseView(MethodView):
+    @login_required
     def get(self, param):
         superuser_only(block=True)
         if param != "create":
@@ -178,7 +183,7 @@ class CreateCourseView(MethodView):
             user = current_user,
             type="create"
         )
-
+    @login_required
     def post(self, param):
         superuser_only(block=True)
         if param != "create":
@@ -199,8 +204,8 @@ class CreateCourseView(MethodView):
             crud.create_course(db, course_info)
         return redirect("/courses")
 
-@login_required
 class TextView(MethodView):
+    @login_required
     def get(self, text_id):
         if not check_user_parmission(text_id=text_id) or not superuser_only(block=False):
             return abort(403)
@@ -230,7 +235,7 @@ class TextView(MethodView):
             prev_text_id=prev_text_id,
             user = current_user,
         )
-
+    @login_required
     def post(self, text_id):
         if request.form.get('_method') == "DELETE":
             course_id = 0
@@ -241,8 +246,8 @@ class TextView(MethodView):
                 crud.delete_text(db, text_id)
         return redirect("/course/"+str(course_id))
 
-@login_required
 class ManageTextView(MethodView):
+    @login_required
     def get(self, text_id, param):
         if param == "edit":
             with DBContext() as db:
@@ -254,6 +259,7 @@ class ManageTextView(MethodView):
                 type="edit"
             )
         
+    @login_required
     def post(self, text_id, param):
         if param == "edit":
             with DBContext() as db:
@@ -266,8 +272,8 @@ class ManageTextView(MethodView):
                 crud.update_text(db, text=text_info)
             return redirect(f"/text/{text.id}")
 
-@login_required
 class TopView(MethodView):
+    @login_required
     def get(self):
         courses = []
         with DBContext() as db:
@@ -282,20 +288,102 @@ class TopView(MethodView):
             user = current_user,
         )
 
-@login_required
-class LogoutView(MethodView):
-    def get(self):
-        logout_user()
-        return redirect("/login")
-
-@login_required
 class ProfileView(MethodView):
+    @login_required
     def get(self):
         pass
-
+    
+    @login_required
     def post(self):
         pass
 
+class UsersView(MethodView):
+    @login_required
+    def get(self, param=None):
+        superuser_only()
+        if param == "create":
+            return render_template(
+                "create_user.html",
+                current_user=current_user,
+                type="create"
+            )
+        elif not param:
+            users = None
+            with DBContext() as db:
+                users = crud.get_users(db)
+            return render_template(
+                "users.html",
+                users = users,
+                current_user=current_user,
+            )
+
+    @login_required
+    def post(self, param):
+        superuser_only()
+        if param == "create":
+            username = request.form["username"]
+            password = request.form["password"]
+            email_address = request.form["email_address"]
+            user = schemas.User(username=username, password=password, email=email_address)
+            if not username or not password or not email_address:
+                return render_template(
+                    "create_user.html",
+                    user = user,
+                    type="create",
+                    message="Invalid username, password or email",
+                )
+            with DBContext() as db:
+                crud.create_user(db, user)
+            return redirect("/users")
+
+class UserTopView(MethodView):
+    @login_required
+    def get(self, username):
+        superuser_only()
+        with DBContext() as db:
+            user = crud.get_user_by_username(db, username)
+        if not user:
+            return abort(404)
+        return render_template(
+            "user.html",
+            user = user,
+            current_user=current_user
+        )
+
+class ManageUserView(MethodView):
+    @login_required
+    def get(self, username, param):
+        superuser_only()
+        with DBContext() as db:
+            user_current_info = crud.get_user_by_username(db, username)
+        if param == "edit":
+            return render_template(
+                "create_user.html",
+                type="edit",
+                user=user_current_info
+            )
+
+    @login_required
+    def post(self, username, param):
+        superuser_only()
+        if param == "edit":
+            username = request.form["username"]
+            email_address = request.form["email_address"]
+            with DBContext() as db:
+                user_current_info = crud.get_user_by_username(db, username)
+            user = schemas.User(id=user_current_info.id, username=username, email=email_address)
+            if not username or not email_address:
+                return render_template(
+                    "create_user.html",
+                    user = user,
+                    type="edit",
+                    message="Invalid username or email",
+                )
+            with DBContext() as db:
+                crud.update_user(db, user)
+            return redirect("/user/"+username)
+
+        # TODO delete user
 
 @login_manager.unauthorized_handler
 def unauthorized():

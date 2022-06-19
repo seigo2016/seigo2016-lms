@@ -9,8 +9,8 @@ def get_user(db: Session, user_id: int):
 def get_user_by_username(db: Session, username: str):
     return db.query(models.User).filter(models.User.username == username).first()
 
-def get_users(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.User).offset(skip).limit(limit).all()
+def get_users(db: Session):
+    return db.query(models.User).all()
 
 def create_user(db: Session, user: schemas.User):
     db_user = models.User(**user.dict())
@@ -19,15 +19,12 @@ def create_user(db: Session, user: schemas.User):
     db.refresh(db_user)
     return db_user
 
-def update_user(db: Session, user_id: int, user: schemas.User):
-    db_user = db.query(models.User).filter(models.User.id == user_id).first()
+def update_user(db: Session, user: schemas.User):
+    db_user = db.query(models.User).filter(models.User.id == user.id).first()
     if db_user:
         db_user.username = user.username
         db_user.mail_address = user.mail_address
-        db_user.password = user.password
-        db_user.memo = user.memo
-        db_user.is_active = user.is_active
-        db_user.is_superuser = user.is_superuser
+        db_user.memo = user.memo if user.memo != None else db_user.memo
     
     db.commit()
     db.refresh(db_user)
@@ -58,11 +55,11 @@ def create_text(db: Session, text_info: schemas.Text):
 def update_text(db: Session, text: schemas.Text):
     db_text = db.query(models.Text).filter(models.Text.id == text.id).first()
     if db_text:
-        db_text.name = text.name
-        db_text.contents = text.contents
-        db_text.memo = text.memo
-        db_text.description = text.description
-        db_text.order_id = text.order_id
+        db_text.name = text.name if text.name != None else db_text.name
+        db_text.contents = text.contents if text.contents != None else db_text.contents
+        db_text.description = text.description if text.description != None else db_text.description
+        db_text.order_id = text.order_id if text.order_id != None else db_text.order_id
+        db_text.memo = text.memo if text.memo != None else db_text.memo
     db.commit()
     db.refresh(db_text)
     return db_text
@@ -115,8 +112,8 @@ def create_users_courses(db: Session, users_courses: schemas.UsersCourses):
     return db_users_courses
 
 # ユーザーとコースの紐づけの更新
-def update_users_courses(db: Session, users_courses_id: int, users_courses: schemas.UsersCourses):
-    db_users_courses = db.query(models.UsersCourses).filter(models.UsersCourses.id == users_courses_id).first()
+def update_users_courses(db: Session,users_courses: schemas.UsersCourses):
+    db_users_courses = db.query(models.UsersCourses).filter(models.UsersCourses.id == users_courses.id).first()
     if db_users_courses:
         db_users_courses.user_id = users_courses.user_id
         db_users_courses.course_id = users_courses.course_id
