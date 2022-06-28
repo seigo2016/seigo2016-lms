@@ -3,5 +3,5 @@ db/sql
 lms-venv/
 .env
 .env.local
- __pycache__/
+__pycache__/
 
