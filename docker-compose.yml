@@ -1,9 +1,12 @@
 version: '3'
 
 services:
-  app:
+  seigo2016-lms:
     build: .
     image: seigo2016-lms-app
+    container_name: seigo2016-lms
+    ports:
+      - ${WEB_PORT}:${WEB_PORT}
     environment:
       - TZ=Asia/Tokyo
       - SECRET_KEY=${SECRET_KEY}
@@ -13,4 +16,10 @@ services:
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_NAME=${DB_NAME}
     restart: always
+    tty: true
+    networks:
+      - db_default
 
+networks:
+    db_default:
+      external: true

@@ -11,6 +11,7 @@ PORT = os.getenv("DB_PORT")
 USER = os.getenv("DB_USER")
 PASSWORD = os.getenv("DB_PASSWORD")
 DATABASE = os.getenv("DB_NAME")
+print(USER)
 
 SQLALCHEMY_DATABASE_URL = f"mariadb+pymysql://{USER}:{PASSWORD}@{HOST}:{PORT}/{DATABASE}"
 
