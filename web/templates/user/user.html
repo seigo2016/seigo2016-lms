@@ -1,0 +1,49 @@
+{%- extends "component/layout.html" %}
+{%- block content %}
+<div class="columns">
+  <div class="container is-centered column is-two-thirds">
+    <table class="table is-fullwidth is-hoverable">
+      <thead>
+        <tr>
+          <th>項目</th>
+          <th>内容</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            ユーザー名
+          </td>
+          <td>{{ user.username }}
+          </td>
+        </tr>
+        <tr>
+          <td>
+            メールアドレス
+          </td>
+          <td>{{ user.mail_address }}
+          </td>
+        </tr>
+        <tr>
+          <td>
+            学習コース
+          </td>
+          <td>
+            {% for c in courses %}
+            <a href="/course/{{c.id}}">{{ c.name }}</a>
+            {% endfor %}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    {% if current_user.is_superuser %}
+    <div class="container columns is-centered">
+      <p class="control">
+        <a href="/user/{{user.username}}/edit" class="button is-link is-light">
+          編集
+        </a>
+      </p>
+    </div>
+    {% endif %}
+  </div>
+  {%- endblock %}

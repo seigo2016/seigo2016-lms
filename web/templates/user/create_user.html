@@ -1,0 +1,87 @@
+{%- extends "component/layout.html" %}
+{%- block content %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+<style type="text/css">
+  body {
+    background-color: white;
+  }
+
+  #course-option {
+    color: black;
+  }
+</style>
+<div class="container columns is-centered">
+  <div class="field mt-5  column is-half">
+    {% if type=="edit" %}
+    <form action="/user/{{user.username}}/edit" method="post" enctype="multipart/form-data">
+      {% else %}
+      <form action="/users/create" method="post" enctype="multipart/form-data">
+        {% endif %}
+        <div class="control">
+          <label class="label" for="username">ユーザー名</label>
+          {% if type=="edit" %}
+          <input class="input" type="text" placeholder="Username input" name="username" value="{{user.username}}" required>
+          {% else %}
+          <input class="input" type="text" placeholder="Username input" name="username" required>
+          {% endif %}
+        </div>
+        <div class="control">
+          <label class="label mt-5" for="email-address">メールアドレス</label>
+          {% if type=="edit" %}
+          <input id="email-address" class="input" type="text" placeholder="Address input" name="email-address" value="{{user.mail_address}}" required>
+          {% else %}
+          <input id="email-address" class="input" type="text" placeholder="Address input" name="email-address" required>
+          {% endif %}
+        </div>
+        <div class="control">
+          <label class="label mt-5" for="password">パスワード</label>
+          {% if type=="edit" %}
+          <a id="password" href="/user/{{user.username}}/reset">パスワードリセット</a>
+          {% else %}
+          <input id="password" class="input" type="password" placeholder="Password input" name="password" required>
+          {% endif %}
+        </div>
+        <div class="">
+          <label class="label mt-5" for="course-option">学習コース</label>
+          {% if type=="edit" %}
+          <select name="courses" id="course-option" placeholder="courses" multiple>
+            {% for c in courses %}
+            {% if c.id in current_courses_id %}
+            <option value="{{c.id}}" selected>{{c.name}}</option>
+            {% else %}
+            <option value="{{c.id}}">{{c.name}}</option>
+            {% endif %}
+            {% endfor %}
+          </select>
+          {% else %}
+          <select name="courses" id="course-option" placeholder="courses" multiple>
+            {% for c in courses %}
+            <option value="{{c.id}}">{{c.name}}</option>
+            {% endfor %}
+          </select>
+          {% endif %}
+        </div>
+
+        <script>
+          let optionElement = new Choices('#course-option', {
+            delimiter: ',',
+            editItems: true,
+            maxItems: 5,
+            removeButton: true,
+            removeItemButton: true,
+          });
+        </script>
+
+        <div class="small has-text-danger">{{message}}</div>
+        <div class="control mt-5 has-text-centered">
+          {% if type=="edit" %}
+          <button class="button is-link is-light">更新</button>
+          {% else %}
+          <button class="button is-link is-light">作成</button>
+          {% endif %}
+        </div>
+      </form>
+  </div>
+</div>
+{%- endblock %}

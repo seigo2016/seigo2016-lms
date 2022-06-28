@@ -1,0 +1,67 @@
+{%- extends "component/layout.html" %}
+{%- block content %}
+<link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css">
+<script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
+
+<div class="container columns is-centered mx-auto">
+  <div class="field mt-5 column is-half">
+    {% if type=="edit" %}
+    <form action="/text/{{text.id}}/edit" method="post" enctype="multipart/form-data">
+      {% else %}
+      <form action="/course/{{course.id}}/create" method="post" enctype="multipart/form-data">
+        {% endif %}
+        <div class="control">
+          <label class="label" for="order-id">テキストNo</label>
+          {% if type=="edit" %}
+          <input id="order-id" class="input" type="text" placeholder="order id" name="order-id" value="{{text.id}}">
+          {% else %}
+          <input id="order-id" class="input" type="text" placeholder="order id" name="order-id">
+          {% endif %}
+        </div>
+        <div class="">
+          <p class="has-text-danger">{{message}}</p>
+        </div>
+        <div class="control">
+          <label class="label" for="text-name">テキスト名</label>
+          {% if type=="edit" %}
+          <input id="text-name" class="input" type="text" placeholder="text name" name="text-name" value="{{text.name}}" required>
+          {% else %}
+          <input id="text-name" class="input" type="text" placeholder="text name" name="text-name" required>
+          {% endif %}
+        </div>
+        <div class="control">
+          <label class="label mt-5" for="description">説明</label>
+          {% if type=="edit" %}
+          <textarea id="description" class="textarea" type="text" placeholder="description" name="description" rows="2">{{text.description}}</textarea>
+          {% else %}
+          <textarea id="description" class="textarea" type="text" placeholder="description" name="description" rows="2"></textarea>
+          {% endif %}
+        </div>
+        <div class="control">
+          <label class="label mt-5" for="contents">本文</label>
+          {% if type=="edit" %}
+          <textarea id="contents" class="textarea" id="mde" type="text" placeholder="contents" name="contents">{{text.contents}}</textarea>
+          {% else %}
+          <textarea id="contents" class="textarea" id="mde" type="text" placeholder="contents" name="contents"></textarea>
+          {% endif %}
+        </div>
+        <div class="control my-5 has-text-centered">
+          {% if type=="edit" %}
+          <button class="button is-primary is-light">更新</button>
+          {% else %}
+          <button class="button is-link is-light">作成</button>
+          {% endif %}
+        </div>
+      </form>
+      <script>
+        const easyMDE = new EasyMDE({ element: document.getElementById('mde') });
+      </script>
+      <style type="text/css">
+        .CodeMirror pre {
+          margin: 0em !important;
+        }
+      </style>
+  </div>
+
+</div>
+{%- endblock %}

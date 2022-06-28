@@ -1,0 +1,40 @@
+{%- extends "component/layout.html" %}
+{%- block content %}
+<div class="container columns is-centered mx-auto">
+  <div class="field mt-5  column is-half">
+    {% if type=="edit" %}
+    <form action="/course/{{course_id}}/edit" method="post" enctype="multipart/form-data">
+      {% else %}
+      <form action="/course/create" method="post" enctype="multipart/form-data">
+        {% endif %}
+        <div class="control">
+          <label class="label" for="course-name">コース名</label>
+          {% if type=="edit" %}
+          <input id="course-name" class="input" type="text" placeholder="course name" name="course-name" value="{{course.name}}" required>
+          {% else %}
+          <input id="course-name" class="input" type="text" placeholder="course name" name="course-name" required>
+          {% endif %}
+        </div>
+        <div class="control">
+          <label class="label mt-5" for="description">説明</label>
+          {% if type=="edit" %}
+          <textarea id="description" class="textarea" type="text" placeholder="description" name="description" rows="3">{{course.description}}</textarea>
+          {% else %}
+          <textarea id="description" class="textarea" type="text" placeholder="description" name="description" rows="3"></textarea>
+          {% endif %}
+        </div>
+        <div class="">
+          <p class="has-text-danger">{{message}}</p>
+        </div>
+        <div class="control mt-5 has-text-centered">
+          {% if type=="edit" %}
+          <button class="button is-link is-light">更新</button>
+          {% else %}
+          <button class="button is-link is-light">作成</button>
+          {% endif %}
+        </div>
+      </form>
+  </div>
+
+</div>
+{%- endblock %}

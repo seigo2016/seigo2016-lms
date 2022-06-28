@@ -1,14 +1,16 @@
-version: "3"
+version: '3'
+
 services:
-  mysql:
-    image: mariadb
-    volumes:
-      - ./mysql/db:/docker-entrypoint-initdb.d
-      - ./data:/var/lib/mysql
-    ports:
-      - ${DB_PORT}:${DB_PORT}
+  app:
+    build: .
+    image: seigo2016-lms-app
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_HOST}
-      MYSQL_DATABASE: ${DB_NAME}
-      MYSQL_USER: ${DB_USER}
-      MYSQL_PASSWORD: ${DB_PASSWORD}
+      - TZ=Asia/Tokyo
+      - SECRET_KEY=${SECRET_KEY}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+    restart: always
+

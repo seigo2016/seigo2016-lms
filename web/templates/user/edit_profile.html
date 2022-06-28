@@ -1,0 +1,79 @@
+{%- extends "component/layout.html" %}
+{%- block content %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+<style type="text/css">
+  body {
+    background-color: white;
+  }
+
+  #course-option {
+    color: black;
+  }
+</style>
+<div class="container columns is-centered">
+  <div class="field mt-5  column is-half">
+    <form action="/profile/edit" method="post" enctype="multipart/form-data">
+      <div class="control">
+        <label class="label" for="username">ユーザー名</label>
+        <input id="username" class="input" type="text" placeholder="Username input" name="username" value="{{user.username}}" disabled>
+      </div>
+      <div class="control">
+        <label class="label mt-5" for="mail-address">メールアドレス</label>
+        <input id="mail-address" class="input" type="text" placeholder="Address input" name="mail-address" value="{{user.mail_address}}" disabled>
+      </div>
+      <div class="control">
+        <label class="label mt-5" for="old-password">古いパスワード</label>
+        <input id="old-password" class="input" type="password" placeholder="Password input" name="old-password" autocomplete="current-password" required>
+      </div>
+      <div class="control">
+        <label class="label mt-5" for="new-password">新しいパスワード</label>
+        <input id="new-password" class="input" type="password" placeholder="Password input" name="new-password" autocomplete="new-password" required>
+      </div>
+      <div class="control">
+        <label class="label mt-5" for="check-password">新しいパスワード(確認)</label>
+        <input id="check-password" class="input" type="password" placeholder="Password input" name="new-confirm-password" autocomplete="new-password" oninput="checkPassword()" required>
+      </div>
+      <p id="error-message"></p>
+      <div class="">
+        <label for="course-option" class="label mt-5">学習コース</label>
+
+        <select name="courses" id="course-option" placeholder="courses" multiple>
+          {% for c in courses %}
+          <option value="{{c.id}}" selected>{{c.name}}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <script>
+        let optionElement = new Choices('#course-option', {
+          delimiter: ',',
+          editItems: false,
+          maxItems: 5,
+          removeButton: false,
+          removeItemButton: false,
+          addItems: false,
+        });
+        function checkPassword() {
+          // 入力値取得
+          const new_password = document.getElementsByName("new-password")[0];
+          const new_confirm_password = document.getElementsByName("new-confirm-password")[0];
+          // パスワード比較
+          if (new_password.value != new_confirm_password.value) {
+            new_confirm_password.setCustomValidity("入力値が一致しません。");
+          } else {
+            new_confirm_password.setCustomValidity('');
+          }
+        }
+
+      </script>
+
+      <div class="small has-text-danger">{{message}}</div>
+      <div class="control mt-5 has-text-centered">
+        <button class="button is-link is-light">更新</button>
+      </div>
+
+    </form>
+  </div>
+
+</div>
+{%- endblock %}

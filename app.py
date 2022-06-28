@@ -6,18 +6,19 @@ import os
 load_dotenv(override=True)
 
 login_manager = LoginManager()
-app = Flask(__name__)
+app = Flask(__name__, static_folder='web/static', template_folder='web/templates')
 app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
 login_manager.init_app(app)
 
-from error_handling import *
+from web.error_handling import *
 
 app.register_error_handler(400, handle_bad_request)
 app.register_error_handler(403, handle_unauthorized_request)
 
-from route import *
+from web.route import *
 app.add_url_rule('/login', view_func=LoginView.as_view('loginView'), methods=["GET", "POST"])
 app.add_url_rule('/logout', view_func=LogoutView.as_view('logoutView'), methods=["GET"])
+app.add_url_rule('/profile/<string:param>', view_func=ProfileView.as_view('profileManageView'), methods=["GET", "POST"])
 app.add_url_rule('/profile', view_func=ProfileView.as_view('profileView'), methods=["GET", "POST"])
 app.add_url_rule('/courses', view_func=CoursesView.as_view('coursesView'), methods=["GET"])
 app.add_url_rule('/', view_func=TopView.as_view('topView'), methods=["GET"])

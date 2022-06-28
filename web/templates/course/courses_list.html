@@ -1,0 +1,39 @@
+{%- extends "component/layout.html" %}
+{%- block content %}
+<div class="columns mx-auto">
+ <div class="container is-centered column is-two-thirds">
+  <table class="table is-fullwidth is-hoverable">
+   <thead>
+    <tr>
+     <td class="row-link">
+     </td>
+     <th>コース名</th>
+     <th>概要</th>
+    </tr>
+   </thead>
+   <tbody>
+    {% for c in courses %}
+    <tr>
+     <td class="row-link">
+      <a href="/course/{{ c.id }}"></a>
+     </td>
+     <td>{{ c.name }}
+     </td>
+     <td>{{ c.description }}
+     </td>
+
+    </tr>
+    {% endfor %}
+   </tbody>
+  </table>
+  {% if current_user.is_superuser %}
+  <div class="container columns is-centered">
+   <p class="control">
+    <a href="/course/create" class="button is-link is-light">
+     新規作成
+    </a>
+   </p>
+  </div>
+  {% endif %}
+ </div>
+ {%- endblock %}
