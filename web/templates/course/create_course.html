@@ -3,7 +3,7 @@
 <div class="container columns is-centered mx-auto">
   <div class="field mt-5  column is-half">
     {% if type=="edit" %}
-    <form action="/course/{{course_id}}/edit" method="post" enctype="multipart/form-data">
+    <form action="/course/{{course.id}}/edit" method="post" enctype="multipart/form-data">
       {% else %}
       <form action="/course/create" method="post" enctype="multipart/form-data">
         {% endif %}

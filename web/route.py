@@ -147,6 +147,7 @@ class ManageCourseView(MethodView):
 
     @login_required
     def post(self, course_id:int, param:str):
+        print(param)
         superuser_only(block=True)
         if param == "create":
             text_name = request.form["text-name"]
@@ -198,6 +199,7 @@ class CreateCourseView(MethodView):
 
     @login_required
     def post(self, param:str):
+        print("CreateCourseView")
         superuser_only(block=True)
         if param != "create":
             return abort(400)

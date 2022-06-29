@@ -31,3 +31,4 @@ app.add_url_rule('/users', view_func=UsersView.as_view("AllUsersView"), methods=
 app.add_url_rule('/users/<string:param>', view_func=UsersView.as_view("UsersView"), methods=["GET", "POST"])
 app.add_url_rule('/user/<string:username>', view_func=UserTopView.as_view("UserTopView"), methods=["GET"])
 app.add_url_rule('/user/<string:username>/<string:param>', view_func=ManageUserView.as_view("ManageUserView"), methods=["GET", "POST"])
+print("Start")
