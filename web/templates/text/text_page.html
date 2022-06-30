@@ -4,9 +4,8 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/tomorrow-night-blue.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js"></script>
 <div class="columns mx-2">
-
   <div class="container is-centered column is-two-thirds">
-    <div class="container columns has-text-right">
+    <div class="columns has-text-right">
       <h1 class="title">{{ text.name }}</h1>
       {% if current_user.is_superuser %}
       <div class="container">
@@ -19,8 +18,8 @@
           </button>
         </p>
       </div>
+      {% endif %}
     </div>
-    {% endif %}
     <div id="content"></div>
     <script type="text/javascript">
       hljs.initHighlightingOnLoad();
@@ -43,7 +42,7 @@
       marked.setOptions({ renderer: renderer })
       marked.setOptions({ breaks: true });
 
-      content = `{{ text.contents|safe }}`;
+      content = `{{ text.contents }}`;
       console.log(content);
       document.getElementById('content').innerHTML = marked.parse(content);
     </script>
