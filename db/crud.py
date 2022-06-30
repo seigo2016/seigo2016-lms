@@ -56,9 +56,10 @@ def create_text(db: Session, text_info: schemas.Text):
     text.course_id = text_info.course_id
     text.contents = text_info.contents
     text.order_id = text_info.order_id
-    print(text.order_id, type(text.order_id))
     db.add(text)
-    return db.commit()
+    db.commit()
+    db.refresh(text)
+    return text.id
 
 def update_text(db: Session, text: schemas.Text):
     db_text = db.query(models.Text).filter(models.Text.id == text.id).first()
@@ -142,5 +143,31 @@ def update_user_courses(db: Session, user_id: int, course_id:int):
 def get_users_courses_by_user_id(db: Session, user_id: int):
     return db.query(models.UsersCourses).filter(models.UsersCourses.user_id == user_id).all()
 
+def get_users_courses_by_course_id(db: Session, course_id: int):
+    return db.query(models.UsersCourses).filter(models.UsersCourses.course_id == course_id).all()
+
 def check_user_courses(db: Session, user_id: int, course_id: int):
     return db.query(models.UsersCourses).filter(models.UsersCourses.user_id == user_id, models.UsersCourses.course_id== course_id).first()
+
+def add_user_text(db: Session, user_id, text_id):
+    db_user_text = models.UsersTexts(user_id = user_id, text_id=text_id)
+    db.add(db_user_text)
+    db.commit()
+    db.refresh(db_user_text)
+    return db_user_text
+
+# ユーザーのテキスト完了フラグ更新
+def update_user_text_complete_state(db: Session, user_id: int, text_id: int):
+    db_user_text = db.query(models.UsersTexts).filter(models.UsersTexts.user_id == user_id, models.UsersTexts.text_id == text_id).first()
+    if db_user_text:
+        db_user_text.is_completed = not db_user_text.is_completed
+        db.commit()
+        db.refresh(db_user_text)
+    return db_user_text
+
+def get_user_text_complete_state(db: Session, user_id: int, text_id: int):
+    db_user_text = db.query(models.UsersTexts).filter(models.UsersTexts.user_id == user_id, models.UsersTexts.text_id == text_id).first()
+    if db_user_text:
+        return db_user_text.is_completed
+
+    return None

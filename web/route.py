@@ -1,3 +1,4 @@
+from re import U
 from db import crud
 from db import schemas
 from db.database import DBContext
@@ -102,8 +103,11 @@ class CourseTopView(MethodView):
         superuser_only(block=False)
         check_user_parmission(course_id=course_id)
         with DBContext() as db:
+            user_texts = {}
             course = crud.get_course(db, course_id=course_id)
             texts = crud.get_texts_by_course_id(db, course.id)
+            for text in texts:
+                user_texts[text.id] = crud.get_user_text_complete_state(db, current_user.id, text.id)
         if not(course or texts):
             return abort(404)
         return render_template(
@@ -111,6 +115,7 @@ class CourseTopView(MethodView):
             texts=texts,
             current_user = current_user,
             course = course,
+            user_texts = user_texts,
             title=f"TOP | {course.name}"
         )
 
@@ -172,7 +177,10 @@ class ManageCourseView(MethodView):
             order_id = int(order_id)
             text.order_id = order_id
             with DBContext() as db:
-                crud.create_text(db, text)
+                text_id = crud.create_text(db, text)
+                users = crud.get_users_courses_by_course_id(db, course_id)
+                for user in users:
+                    crud.add_user_text(db, user.user_id, text_id)
             return redirect("/course/"+str(course_id))
 
         if param == "edit":
@@ -199,7 +207,6 @@ class CreateCourseView(MethodView):
 
     @login_required
     def post(self, param:str):
-        print("CreateCourseView")
         superuser_only(block=True)
         if param != "create":
             return abort(400)
@@ -223,10 +230,12 @@ class TextView(MethodView):
     @login_required
     def get(self, text_id:int):
         check_user_parmission(text_id=text_id)
+        is_completed=False
         with DBContext() as db:
             text = crud.get_text(db, text_id=text_id)
             course_id = text.course_id
             all_texts = crud.get_texts_by_course_id(db, course_id)
+            is_completed = crud.get_user_text_complete_state(db, user_id=current_user.id, text_id=text_id)
         if not text or not course_id or not all_texts:
             return "Something wrong...", 500
         text_order_id = text.order_id
@@ -247,12 +256,14 @@ class TextView(MethodView):
             text=text,
             next_text_id=next_text_id,
             prev_text_id=prev_text_id,
+            is_completed=is_completed,
             current_user = current_user,
             title=f"{text.name}"
         )
 
     @login_required
     def post(self, text_id:int):
+        superuser_only(block=True)
         if request.form.get('_method') == "DELETE":
             course_id = 0
             with DBContext() as db:
@@ -266,6 +277,7 @@ class ManageTextView(MethodView):
     @login_required
     def get(self, text_id:int, param:str):
         if param == "edit":
+            superuser_only(block=True)
             with DBContext() as db:
                 text = crud.get_text(db, text_id=text_id)
             return render_template(
@@ -274,10 +286,18 @@ class ManageTextView(MethodView):
                 type="edit",
                 title=f"テキスト編集"
             )
+        elif param == "complete":
+            with DBContext() as db:
+                text = crud.get_text(db, text_id=text_id)            
+            check_user_parmission(text_id=text_id)
+            with DBContext() as db:
+                crud.update_user_text_complete_state(db, current_user.id, text_id)
+            return redirect(f"/text/{text.id}")
         
     @login_required
     def post(self, text_id:int, param:str):
         if param == "edit":
+            superuser_only(block=True)
             with DBContext() as db:
                 text = crud.get_text(db, text_id=text_id)
             name = request.form["name"] if request.form["name"] else text.name
@@ -426,13 +446,16 @@ class ManageUserView(MethodView):
                 add_courses, del_courses = get_diff_courses(user_id=user.id, new_user_courses_ids=courses)
                 crud.update_user(db, user)
 
-                for course in add_courses:
-                    course = schemas.UsersCourses(user_id=user.id, course_id=course)
-                    crud.create_users_courses(db, course)
+                for course_id in add_courses:
+                    user_course = schemas.UsersCourses(user_id=user.id, course_id=course_id)
+                    crud.create_users_courses(db, user_course)
+                    texts = crud.get_texts_by_course_id(db, course_id=course_id)
+                    for text in texts:
+                        crud.add_user_text(db, user.id, text.id)
 
-                for course in del_courses:
-                    course = schemas.UsersCourses(user_id=user.id, course_id=course)
-                    crud.delete_users_courses(db, course)
+                for course_id in del_courses:
+                    user_course = schemas.UsersCourses(user_id=user.id, course_id=course_id)
+                    crud.delete_users_courses(db, user_course)
 
             return redirect("/user/"+username)
         elif param == "reset":

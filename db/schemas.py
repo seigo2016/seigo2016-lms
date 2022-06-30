@@ -34,6 +34,7 @@ class UsersTexts(BaseModel):
     id: Optional[int] = None
     user_id: int
     text_id: int
+    is_completed: bool = False
 
 class TokenData(BaseModel):
     username: Union[str, None] = None

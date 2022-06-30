@@ -1,5 +1,6 @@
 {%- extends "component/layout.html" %}
 {%- block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 <div class="columns mx-auto">
  <div class="container is-centered column is-two-thirds">
   {% if current_user.is_superuser %}
@@ -25,6 +26,7 @@
      <th>テキストNo.</th>
      <th>コース名</th>
      <th>概要</th>
+     <th>進捗</th>
     </tr>
    </thead>
    <tbody>
@@ -38,6 +40,13 @@
      <td>{{ t.name }}
      </td>
      <td>{{ t.description }}
+     </td>
+     <td>
+      {% if user_texts[t.id] %}
+      <i class="fa fa-check" aria-hidden="true"></i>
+      {% else %}
+      <p></p>
+      {% endif %}
      </td>
     </tr>
     {% endfor %}

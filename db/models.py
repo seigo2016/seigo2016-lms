@@ -44,4 +44,5 @@ class UsersTexts(Base):
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id"))
     text_id = Column(Integer, ForeignKey("texts.id"))
+    is_completed = Column(Boolean, default=False)
 

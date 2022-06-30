@@ -6,20 +6,22 @@
 <div class="columns mx-2">
 
   <div class="container is-centered column is-two-thirds">
-    <h1 class="title">{{ text.name }}</h1>
-    <div id="content"></div>
-    {% if current_user.is_superuser %}
-    <div class="container columns is-centered m-5">
-      <p class="control">
-        <a href="/text/{{text.id}}/edit" class="button">
-          編集
-        </a>
-        <button id="open-modal-button" class="js-modal-trigger is-danger is-light button">
-          削除
-        </button>
-      </p>
+    <div class="container columns has-text-right">
+      <h1 class="title">{{ text.name }}</h1>
+      {% if current_user.is_superuser %}
+      <div class="container">
+        <p class="control">
+          <a href="/text/{{text.id}}/edit" class="button">
+            編集
+          </a>
+          <button id="open-modal-button" class="js-modal-trigger is-danger is-light button">
+            削除
+          </button>
+        </p>
+      </div>
     </div>
     {% endif %}
+    <div id="content"></div>
     <script type="text/javascript">
       hljs.initHighlightingOnLoad();
       marked.setOptions({
@@ -41,9 +43,36 @@
       marked.setOptions({ renderer: renderer })
       marked.setOptions({ breaks: true });
 
-      content = `{{ text.contents }}`;
+      content = `{{ text.contents|safe }}`;
+      console.log(content);
       document.getElementById('content').innerHTML = marked.parse(content);
     </script>
+
+    <div class="is-centered container columns my-5">
+      <form action="/text/{{text.id}}/complete" method="get" enctype="multipart/form-data">
+        {% if not is_completed %}
+        <button class="button is-inform is-light">完了</button>
+        {% else %}
+        <button class="button is-inform is-light">完了取り消し</button>
+        {% endif %}
+      </form>
+    </div>
+
+    <div class="container columns is-centered my-5">
+      <p class="control">
+        {% if prev_text_id != -1 %}
+        <a href="/text/{{prev_text_id}}" class="button">
+          前へ
+        </a>
+        {% endif %}
+        {% if next_text_id != -1%}
+        <a href="/text/{{next_text_id}}" class="button">
+          次へ
+        </a>
+        {% endif %}
+      </p>
+    </div>
+
   </div>
 </div>
 {% with text_id = text.id %}
