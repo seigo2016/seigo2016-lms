@@ -4,7 +4,7 @@
 <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
 
 <div class="container columns is-centered mx-auto">
-  <div class="field mt-5 column is-half">
+  <div class="field mt-5 column is-two-thirds">
     {% if type=="edit" %}
     <form action="/text/{{text.id}}/edit" method="post" enctype="multipart/form-data">
       {% else %}
@@ -40,9 +40,9 @@
         <div class="control">
           <label class="label mt-5" for="contents">本文</label>
           {% if type=="edit" %}
-          <textarea id="contents" class="textarea" id="mde" type="text" placeholder="contents" name="contents">{{text.contents}}</textarea>
+          <textarea id="mde" class="textarea" type="text" placeholder="contents" name="contents">{{text.contents}}</textarea>
           {% else %}
-          <textarea id="contents" class="textarea" id="mde" type="text" placeholder="contents" name="contents"></textarea>
+          <textarea id="mde" class="textarea" type="text" placeholder="contents" name="contents"></textarea>
           {% endif %}
         </div>
         <div class="control my-5 has-text-centered">
