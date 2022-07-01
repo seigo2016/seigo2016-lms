@@ -152,7 +152,6 @@ class ManageCourseView(MethodView):
 
     @login_required
     def post(self, course_id:int, param:str):
-        print(param)
         superuser_only(block=True)
         if param == "create":
             text_name = request.form["text-name"]
@@ -300,7 +299,7 @@ class ManageTextView(MethodView):
             superuser_only(block=True)
             with DBContext() as db:
                 text = crud.get_text(db, text_id=text_id)
-            name = request.form["name"] if request.form["name"] else text.name
+            name = request.form["text-name"] if request.form["text-name"] else text.name
             description = request.form["description"] if request.form["description"] else text.description
             contents = request.form["contents"] if request.form["contents"] else text.contents
             text_info = schemas.Text(course_id=text.course_id, id=text.id, name=name, contents=contents, description=description)
