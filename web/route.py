@@ -302,7 +302,8 @@ class ManageTextView(MethodView):
             name = request.form["text-name"] if request.form["text-name"] else text.name
             description = request.form["description"] if request.form["description"] else text.description
             contents = request.form["contents"] if request.form["contents"] else text.contents
-            text_info = schemas.Text(course_id=text.course_id, id=text.id, name=name, contents=contents, description=description)
+            order_id = request.form["order-id"] if request.form["order-id"] else text.order_id
+            text_info = schemas.Text(course_id=text.course_id, id=text.id, name=name, contents=contents, description=description, order_id=order_id)
             with DBContext() as db:
                 crud.update_text(db, text=text_info)
             return redirect(f"/text/{text.id}")
